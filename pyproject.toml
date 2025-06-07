@@ -1,0 +1,18 @@
+[build-system]
+requires = ["scikit-build-core>=0.10", "cmake>=3.18", "ninja", "swig>=4.1"]
+build-backend = "scikit_build_core.build"
+
+[project]
+name = "quantlib-moex"
+version = "0.1.0"
+description = "QuantLib extensions for Moscow Exchange (MOEX)"
+authors = [{ name = "Sergey Kostrukov", email = "sergey.dev@kostrukov.com" }]
+license = { file = "LICENSE" }
+requires-python = ">=3.9"
+dependencies = ["QuantLib-Python>=1.34,<1.35"]
+
+[tool.scikit-build]
+wheel.packages = ["src/qlmoex"]
+
+[project.urls]
+Homepage = "https://github.com/kostrse/quantlib-moex"

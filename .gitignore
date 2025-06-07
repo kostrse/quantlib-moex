@@ -1,0 +1,9 @@
+# cmake / build artefacts
+
+build/
+dist/
+\*.egg-info/
+*.pyc
+**pycache**/
+._*
+.ipynb_checkpoints

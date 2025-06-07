@@ -1,0 +1,25 @@
+name: Wheels
+
+on:
+  push:
+    tags: ["v*.*.*"]
+  workflow_dispatch:
+
+jobs:
+  build:
+    name: build wheels
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pypa/cibuildwheel@v2.17.0
+        env:
+          CIBW_BUILD: "cp3*-*"
+          CIBW_TEST_COMMAND: "python -m pytest -q"
+          CIBW_TEST_EXTRAS: "test"
+      - uses: actions/upload-artifact@v4
+        with:
+          path: wheelhouse/*.whl

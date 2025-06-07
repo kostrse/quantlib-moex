@@ -1,9 +1,16 @@
 # cmake / build artefacts
-
 build/
 dist/
-\*.egg-info/
+*.egg-info/
 *.pyc
 **pycache**/
 ._*
 .ipynb_checkpoints
+
+# SWIG generated files
+*_wrap.c
+*_wrap.cxx
+*_wrap.cpp
+
+# Temporary test files
+test_integration.py

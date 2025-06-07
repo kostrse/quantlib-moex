@@ -15,7 +15,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pypa/cibuildwheel@v2.17.0
+      - uses: pypa/cibuildwheel@v2.23.3
         env:
           CIBW_BUILD: "cp3*-*"
           CIBW_TEST_COMMAND: "python -m pytest -q"

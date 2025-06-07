@@ -35,7 +35,10 @@ swig_add_library(moex_gcurve TYPE MODULE LANGUAGE python
 target_link_libraries(moex_gcurve PRIVATE QuantLib Python3::Python)
 
 # Include directories
-target_include_directories(moex_gcurve PRIVATE vendor/quantlib)
+target_include_directories(moex_gcurve PRIVATE 
+    vendor/quantlib
+    src/qlmoex
+)
 
 # Set output name
 set_target_properties(moex_gcurve PROPERTIES OUTPUT_NAME "_moex_gcurve")

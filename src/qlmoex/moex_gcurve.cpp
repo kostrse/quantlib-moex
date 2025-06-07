@@ -1,4 +1,5 @@
 #include "moex_gcurve.hpp"
+#include <ql/time/timeunit.hpp>
 #include <cmath>
 
 using namespace QuantLib;
@@ -24,4 +25,9 @@ Rate MoexGCurve::zeroYieldImpl(Time t) const {
     for (std::size_t k = 0; k < G_.size(); ++k)
         r += G_[k] * std::pow(t, static_cast<int>(k + 1));
     return r;
+}
+
+Date MoexGCurve::maxDate() const {
+    // Return a date far in the future (100 years from reference date)
+    return referenceDate() + 100 * Years;
 }

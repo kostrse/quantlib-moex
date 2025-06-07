@@ -25,6 +25,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Install system dependencies (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libboost-dev
+
+      - name: Install system dependencies (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install boost
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.23.3
         env:
@@ -33,6 +44,8 @@ jobs:
           CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_WINDOWS: "AMD64"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
+          CIBW_BEFORE_BUILD_LINUX: "yum install -y boost-devel || apt-get update && apt-get install -y libboost-dev"
+          CIBW_BEFORE_BUILD_MACOS: "brew install boost || true"
           CIBW_TEST_REQUIRES: "pytest"
           CIBW_TEST_COMMAND: "python -c 'import QuantLib as ql; from qlmoex import MoexGCurve; today = ql.Date(7, 6, 2025); curve = MoexGCurve(today, 0.0095, -0.018, 0.025, 1.5, [0.0002, -0.00015, 0.00005]); assert curve.discount(0.5) > 0.0; print(\"Test passed!\")'"
 

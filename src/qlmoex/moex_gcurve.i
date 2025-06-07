@@ -50,8 +50,13 @@ namespace QuantLib {
         NullCalendar();
     };
     
-    // Simple forward declaration for base class
-    class ZeroYieldStructure;
+    // Base class interface with essential methods - abstract class
+    %nodefaultctor ZeroYieldStructure;
+    class ZeroYieldStructure {
+    public:
+        double discount(double t) const;
+        Date referenceDate() const;
+    };
     
     // MoexGCurve interface
     class MoexGCurve : public ZeroYieldStructure {

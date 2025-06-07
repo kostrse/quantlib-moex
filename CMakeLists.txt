@@ -17,7 +17,7 @@ add_subdirectory(vendor/quantlib)
 
 # Find SWIG and Python
 find_package(SWIG 4.1 REQUIRED COMPONENTS python)
-find_package(Python3 COMPONENTS Development REQUIRED)
+find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
 
 # Include SWIG macros
 include(UseSWIG)
@@ -32,7 +32,7 @@ swig_add_library(moex_gcurve TYPE MODULE LANGUAGE python
                          src/qlmoex/moex_gcurve.cpp)
 
 # Link libraries - QuantLib statically, Python dynamically
-target_link_libraries(moex_gcurve PRIVATE QuantLib Python3::Python)
+target_link_libraries(moex_gcurve PRIVATE QuantLib Python3::Module)
 
 # Include directories
 target_include_directories(moex_gcurve PRIVATE 

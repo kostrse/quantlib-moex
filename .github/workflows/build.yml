@@ -14,35 +14,66 @@ permissions:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-latest, macos-13, macos-latest]
+    name: Build wheels using QuantLib-SWIG devenv (Linux)
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/lballabio/quantlib-swig-devenv:python
+      # This image has QuantLib, Boost, SWIG, and other dependencies pre-installed
+      # to ensure compatibility with QuantLib-SWIG build environment
 
     steps:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          
-      - name: Verify submodule initialization
-        run: |
-          echo "Checking submodule status..."
-          git submodule status
-          ls -la vendor/quantlib/
-          if [ ! -f "vendor/quantlib/CMakeLists.txt" ]; then
-            echo "QuantLib submodule not properly initialized, forcing update..."
-            git submodule update --init --recursive --force
-          fi
 
-      - name: Install system dependencies (Linux)
-        if: runner.os == 'Linux'
+      - name: Install packages
         run: |
-          sudo apt-get update
-          sudo apt-get install -y libboost-dev
+          apt-get update
+          apt-get install -y python3-pip
+      
+      - name: Verify build environment
+        run: |
+          echo "Python version:"
+          python3 --version
+          echo "SWIG version:"
+          swig -version
+          echo "CMake version:"
+          cmake --version
+          echo "Boost version:"
+          find /usr -name "boost" -type d 2>/dev/null | head -5 || echo "Boost search completed"
+          pkg-config --exists 'boost >= 1.58' && echo "Boost found via pkg-config" || echo "Boost not found via pkg-config"
+          echo "QuantLib info (should be available in QuantLib-SWIG devenv):"
+          find /usr -name "*quantlib*" -type f 2>/dev/null | head -5 || echo "QuantLib search completed"
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.23.3
+        env:
+          CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
+          CIBW_SKIP: "*-musllinux* *-win*"  # Skip Windows for now due to Boost complexity
+          CIBW_ARCHS_LINUX: "x86_64"
+          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
+          CIBW_BEFORE_BUILD_LINUX: "pip install --upgrade pip setuptools wheel"
+          CIBW_TEST_REQUIRES: "pytest"
+          CIBW_TEST_COMMAND: "python -c 'import QuantLib as ql; from qlmoex import MoexGCurve; today = ql.Date(7, 6, 2025); curve = MoexGCurve(today, 0.0095, -0.018, 0.025, 1.5, [0.0002, -0.00015, 0.00005]); assert curve.discount(0.5) > 0.0; print(\"Test passed!\")'"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cibw-wheels-linux
+          path: ./wheelhouse/*.whl
+
+  build_wheels_macos:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [macos-13, macos-latest]
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
       - name: Install system dependencies (macOS)
-        if: runner.os == 'macOS'
         run: |
           brew install boost
 
@@ -51,10 +82,7 @@ jobs:
         env:
           CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "*-musllinux* *-win*"  # Skip Windows for now due to Boost complexity
-          CIBW_ARCHS_LINUX: "x86_64"
           CIBW_ARCHS_MACOS: "x86_64 arm64"
-          CIBW_MANYLINUX_X86_64_IMAGE: "manylinux_2_28"
-          CIBW_BEFORE_BUILD_LINUX: "yum install -y boost-devel || (apt-get update && apt-get install -y libboost-dev)"
           CIBW_BEFORE_BUILD_MACOS: "brew install boost || true"
           CIBW_ENVIRONMENT_MACOS: "CMAKE_ARGS='-DPython3_FIND_STRATEGY=LOCATION -DPython3_FIND_UNVERSIONED_NAMES=FIRST'"
           CIBW_TEST_REQUIRES: "pytest"
@@ -72,16 +100,6 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
-          
-      - name: Verify submodule initialization
-        run: |
-          echo "Checking submodule status..."
-          git submodule status
-          ls -la vendor/quantlib/
-          if [ ! -f "vendor/quantlib/CMakeLists.txt" ]; then
-            echo "QuantLib submodule not properly initialized, forcing update..."
-            git submodule update --init --recursive --force
-          fi
 
       - name: Build sdist
         run: pipx run build --sdist

@@ -17,7 +17,20 @@ add_subdirectory(vendor/quantlib)
 
 # Find SWIG and Python
 find_package(SWIG 4.1 REQUIRED COMPONENTS python)
+
+# For cibuildwheel and macOS, help CMake find Python correctly
+if(DEFINED ENV{PYTHON})
+    set(Python3_EXECUTABLE $ENV{PYTHON})
+endif()
+
 find_package(Python3 COMPONENTS Interpreter Development.Module REQUIRED)
+
+# Debug: Print Python information
+message(STATUS "Python3_FOUND: ${Python3_FOUND}")
+message(STATUS "Python3_EXECUTABLE: ${Python3_EXECUTABLE}")
+message(STATUS "Python3_INCLUDE_DIRS: ${Python3_INCLUDE_DIRS}")
+message(STATUS "Python3_Development.Module_FOUND: ${Python3_Development.Module_FOUND}")
+message(STATUS "Python3_VERSION: ${Python3_VERSION}")
 
 # Include SWIG macros
 include(UseSWIG)
@@ -31,8 +44,11 @@ swig_add_library(moex_gcurve TYPE MODULE LANGUAGE python
                  SOURCES src/qlmoex/moex_gcurve.i
                          src/qlmoex/moex_gcurve.cpp)
 
+# Add explicit dependency on QuantLib library
+add_dependencies(moex_gcurve ql_library)
+
 # Link libraries - QuantLib statically, Python dynamically
-target_link_libraries(moex_gcurve PRIVATE QuantLib Python3::Module)
+target_link_libraries(moex_gcurve PRIVATE ql_library Python3::Module)
 
 # Include directories
 target_include_directories(moex_gcurve PRIVATE 

@@ -1,4 +1,10 @@
 cmake_minimum_required(VERSION 3.18)
+
+# Set policy for FindBoost module deprecation in CMake 4.0+
+if(POLICY CMP0167)
+    cmake_policy(SET CMP0167 OLD)
+endif()
+
 project(quantlib_moex LANGUAGES CXX)
 
 # Build QuantLib statically from the submodule
@@ -11,6 +17,9 @@ set(QL_BUILD_EXAMPLES OFF CACHE BOOL "Build QuantLib examples")
 set(QL_BUILD_TEST_SUITE OFF CACHE BOOL "Build QuantLib test suite")
 set(QL_ENABLE_SESSIONS OFF CACHE BOOL "Enable QuantLib sessions")
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "Build QuantLib as static library")
+
+# Set the policy for the submodule as well
+set(CMAKE_POLICY_DEFAULT_CMP0167 OLD)
 
 # Add QuantLib submodule
 add_subdirectory(vendor/quantlib)

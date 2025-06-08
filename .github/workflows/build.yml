@@ -26,6 +26,17 @@ jobs:
         with:
           submodules: recursive
 
+      - name: Set up Python environment
+        run: |
+          python3 -m ensurepip --upgrade
+          python3 -m pip install --upgrade pip setuptools wheel
+  
+      - name: Debug Python environment
+        run: |
+          which python
+          python --version
+          python -m pip --version
+
       - name: Verify build environment
         run: |
           echo "Python version:"

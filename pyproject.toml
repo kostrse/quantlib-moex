@@ -9,7 +9,7 @@ description = "QuantLib extensions for Moscow Exchange (MOEX)"
 authors = [{ name = "Sergey Kostrukov", email = "sergey.dev@kostrukov.com" }]
 license = { file = "LICENSE" }
 requires-python = ">=3.9"
-dependencies = ["QuantLib==1.38.*"]
+dependencies = ["QuantLib==1.38.0"]
 
 [project.optional-dependencies]
 test = ["pytest>=6.0"]

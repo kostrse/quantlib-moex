@@ -1,5 +1,7 @@
 #pragma once
 #include <ql/termstructures/yield/zeroyieldstructure.hpp>
+#include <ql/time/daycounters/actual365fixed.hpp>
+#include <ql/time/calendars/nullcalendar.hpp>
 #include <vector>
 
 namespace QuantLib {
@@ -14,6 +16,7 @@ class MoexGCurve : public ZeroYieldStructure {
 
   protected:
     Rate zeroYieldImpl(Time t) const override;
+    Date maxDate() const override;
 
   private:
     double B1_, B2_, B3_, T1_;

@@ -1,4 +1,4 @@
 [submodule "vendor/quantlib"]
 	path = vendor/quantlib
 	url = https://github.com/lballabio/QuantLib.git
-	branch = master
+	branch = v1.38

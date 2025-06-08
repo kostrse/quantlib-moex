@@ -24,6 +24,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          
+      - name: Verify submodule initialization
+        run: |
+          echo "Checking submodule status..."
+          git submodule status
+          ls -la vendor/quantlib/
+          if [ ! -f "vendor/quantlib/CMakeLists.txt" ]; then
+            echo "QuantLib submodule not properly initialized, forcing update..."
+            git submodule update --init --recursive --force
+          fi
 
       - name: Install system dependencies (Linux)
         if: runner.os == 'Linux'
@@ -61,6 +71,16 @@ jobs:
       - uses: actions/checkout@v4
         with:
           submodules: recursive
+          
+      - name: Verify submodule initialization
+        run: |
+          echo "Checking submodule status..."
+          git submodule status
+          ls -la vendor/quantlib/
+          if [ ! -f "vendor/quantlib/CMakeLists.txt" ]; then
+            echo "QuantLib submodule not properly initialized, forcing update..."
+            git submodule update --init --recursive --force
+          fi
 
       - name: Build sdist
         run: pipx run build --sdist

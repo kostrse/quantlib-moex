@@ -17,18 +17,18 @@ This package follows a versioning scheme that reflects compatibility with QuantL
 
 - **Version format**: `X.Y.Z.postN` where `X.Y.Z` matches the QuantLib version
 - **Current version**: `1.38.0.post0` - compatible with QuantLib 1.38.x
-- **Python dependency**: `QuantLib-Python==1.38.*` - ensures ABI and runtime compatibility
+- **Python dependency**: `QuantLib==1.38.*` - ensures ABI and runtime compatibility
 
 ### Why this versioning scheme?
 
 1. **ABI Compatibility**: The package is built against a specific QuantLib version and uses the same C++ ABI
-2. **Runtime Compatibility**: QuantLib-Python must match the QuantLib version for proper object interoperability
+2. **Runtime Compatibility**: QuantLib must match the QuantLib version for proper object interoperability
 3. **Static Linking**: QuantLib is statically linked into the package, ensuring consistent behavior across platforms
 
 ### Upgrading
 
 When upgrading quantlib-moex:
-- The QuantLib-Python dependency will be automatically updated to the matching version
+- The QuantLib dependency will be automatically updated to the matching version
 - Your existing code should continue to work without changes
 - Check the QuantLib changelog for any breaking changes in the underlying library
 

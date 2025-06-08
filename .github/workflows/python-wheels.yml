@@ -18,6 +18,8 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: ghcr.io/lballabio/quantlib-swig-devenv:python
+      # This image should have QuantLib, Boost, SWIG, and other dependencies pre-installed
+      # to ensure compatibility with QuantLib-SWIG build environment
 
     steps:
       - uses: actions/checkout@v4
@@ -41,7 +43,8 @@ jobs:
 
       - name: Install build dependencies
         run: |
-          pip3 install scikit-build-core swig
+          pip3 install scikit-build-core
+          # SWIG should already be available in the QuantLib-SWIG devenv image
 
       - name: Verify build environment
         run: |
@@ -51,13 +54,16 @@ jobs:
           swig -version
           echo "CMake version:"
           cmake --version
-          echo "Boost info:"
+          echo "Boost version:"
           find /usr -name "boost" -type d 2>/dev/null | head -5 || echo "Boost search completed"
           pkg-config --exists 'boost >= 1.58' && echo "Boost found via pkg-config" || echo "Boost not found via pkg-config"
+          echo "QuantLib info (should be available in QuantLib-SWIG devenv):"
+          find /usr -name "*quantlib*" -type f 2>/dev/null | head -5 || echo "QuantLib search completed"
 
       - name: Build wheel
         run: |
-          pip3 wheel . --no-build-isolation --wheel-dir wheelhouse
+          # Build wheel using the project's build system (scikit-build-core + CMake)
+          pip3 wheel . --no-build-isolation --wheel-dir wheelhouse --verbose
 
       - name: Test wheel
         run: |

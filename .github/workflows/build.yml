@@ -47,7 +47,7 @@ jobs:
           brew install boost
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.23.3
+        uses: pypa/cibuildwheel@v3.2.0
         env:
           CIBW_BUILD: "cp39-* cp310-* cp311-* cp312-*"
           CIBW_SKIP: "*-musllinux* *-win*"  # Skip Windows for now due to Boost complexity

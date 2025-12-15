@@ -60,7 +60,7 @@ jobs:
           CIBW_TEST_REQUIRES: "pytest"
           CIBW_TEST_COMMAND: "python -c 'import QuantLib as ql; from qlmoex import MoexGCurve; today = ql.Date(7, 6, 2025); curve = MoexGCurve(today, 0.0095, -0.018, 0.025, 1.5, [0.0002, -0.00015, 0.00005]); assert curve.discount(0.5) > 0.0; print(\"Test passed!\")'"
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ strategy.job-index }}
           path: ./wheelhouse/*.whl
@@ -86,7 +86,7 @@ jobs:
       - name: Build sdist
         run: pipx run build --sdist
 
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v6
         with:
           name: cibw-sdist
           path: dist/*.tar.gz
